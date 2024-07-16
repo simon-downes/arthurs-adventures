@@ -1,0 +1,71 @@
+# tile data for elements in the game
+# name: [character, fg colour, bg colour, walkable]
+
+empty: [' ', 'white', '']
+
+# ------------------------------------------------------------------------------
+# ui tiles
+# ------------------------------------------------------------------------------
+
+health: ['♥︎', 'red', '']
+health_full: ['▪', 'red', '']
+health_empty: ['▫', 'red', '']
+
+xp: ['★', 'blue', '']
+xp_full: ['▪', 'blue', '']
+xp_empty: ['▫', 'blue', '']
+
+rank: ['⚜', 'bright_magenta', '']
+
+# ------------------------------------------------------------------------------
+# actor tiles
+# ------------------------------------------------------------------------------
+player: ['☿', 'white', '']
+
+# ------------------------------------------------------------------------------
+# item tiles
+# ------------------------------------------------------------------------------
+gold: ['$', 'bright_yellow', '']
+gem: ['♦', 'bright_red', '']
+weapon: ['⸸', 'aliceblue', '']
+armour: ['⛨', '', '']
+
+potion_health: ['!', 'green', '']
+
+# ------------------------------------------------------------------------------
+# terrain tiles
+# ------------------------------------------------------------------------------
+water: ['≋', 'dodgerblue3', '', false]
+grass: [',', 'green', '']
+forest_path: ['▪', 'tan4', '']
+town_path: ['▪', 'tan4', '']
+
+# different types of trees make the map look more interesting
+tree_1: ['♣', 'darkgreen', '', false]
+tree_2: ['♣', 'olivedrab', '', false]
+tree_3: ['♣', 'forestgreen', '', false]
+tree_4: ['♣', 'webgreen', '', false]
+tree_5: ['♣', 'darkolivegreen', '', false]
+tree_6: ['♠', 'darkgreen', '', false]
+tree_7: ['♠', 'olivedrab', '', false]
+tree_8: ['♠', 'forestgreen', '', false]
+tree_9: ['♠', 'webgreen', '', false]
+tree_10: ['♠', 'darkolivegreen', '', false]
+
+# ------------------------------------------------------------------------------
+# building tiles
+# ------------------------------------------------------------------------------
+
+door: ['☖', 'white', '' ]
+
+wall_nw: ['╔', 'white', '', false]
+wall_n: ['╦', 'white', '', false]
+wall_ne: ['╗', 'white', '', false]
+wall_v: ['║', 'white', '', false]
+wall_h: ['═', 'white', '', false]
+wall_w: ['╠', 'white', '', false]
+wall_x: ['╬', 'white', '', false]
+wall_e: ['╣', 'white', '', false]
+wall_sw: ['╚', 'white', '' , false]
+wall_s: ['╩', 'white', '', false]
+wall_se: ['╝', 'white', '' , false]
