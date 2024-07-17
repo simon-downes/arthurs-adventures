@@ -1,7 +1,7 @@
 # tile data for elements in the game
-# name: [character, fg colour, bg colour, walkable]
+# name: [character, fg colour, bg colour = '', walkable = True]
 
-empty: [' ', 'white', '']
+empty: ['·', 'gray40', '']
 
 # ------------------------------------------------------------------------------
 # ui tiles
@@ -20,7 +20,7 @@ rank: ['⚜', 'bright_magenta', '']
 # ------------------------------------------------------------------------------
 # actor tiles
 # ------------------------------------------------------------------------------
-player: ['☿', 'white', '']
+player: ['☿', 'bright_magenta', '']
 
 # ------------------------------------------------------------------------------
 # item tiles
@@ -36,7 +36,7 @@ potion_health: ['!', 'green', '']
 # terrain tiles
 # ------------------------------------------------------------------------------
 water: ['≋', 'dodgerblue3', '', false]
-grass: [',', 'green', '']
+grass: ['·', 'darkgreen', '']
 forest_path: ['▪', 'tan4', '']
 town_path: ['▪', 'tan4', '']
 
@@ -56,7 +56,8 @@ tree_10: ['♠', 'darkolivegreen', '', false]
 # building tiles
 # ------------------------------------------------------------------------------
 
-door: ['☖', 'white', '' ]
+door_open: ['☖', 'white', '' ]
+door_closed: ['☗', 'white', '' ]
 
 wall_nw: ['╔', 'white', '', false]
 wall_n: ['╦', 'white', '', false]

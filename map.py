@@ -3,9 +3,13 @@ import random
 import yaml
 
 import tileset
+import messages
 
 class Map:
-    def __init__(self, name, player):
+    def __init__(self, name, player, width = 80, height = 25):
+
+        self._width = width
+        self._height = height
 
         self._player = player
 
@@ -17,51 +21,51 @@ class Map:
         with open(f"data/map-{name}.yaml", 'r') as f:
             map = yaml.safe_load(f)
 
-        # set the map attributes
-        self.width  = map.get('width')
-        self.terrain = map.get('terrain')
-
         lines = []
 
-        for n, line in enumerate(map.get('data').rstrip().split("\n")):
+        # if we have some map data, strip the trailing newline, replace spaces with dots and split into lines
+        # we replace spaces with dots so that they resolve to null tiles
+        # in map data, spaces should only be using inside buildings
+        map_data = map.get('data', '').rstrip().replace(' ', '.').split("\n")
 
-            # empty line so pad it with spaces
-            if len(line) == 0:
-                # TODO: log error
-                line = " " * self.width
+        # process each line of map data
+        for n, line in enumerate(map_data):
 
-            # line too short so pad it with last character
-            elif len(line) < self.width:
-                line = line.ljust(self.width, line[-1])
+            # calc it once
+            line_len = len(line)
+
+            # empty line so pad it with spaces - will become default terrain
+            if line_len == 0:
+                line = ' ' * self._width
+
+            # line too short so center it with spaces
+            elif line_len < self._width:
+                lpad = (self._width - line_len) // 2
+                rpad = self._width - line_len - lpad
+                line = ' ' * lpad + line + ' ' * rpad
 
             # line too long so truncate it
-            elif len(line) > self.width:
+            elif line_len > self._width:
                 # TODO: log error
-                line = line[:self.width]
+                line = line[:self._width]
 
             lines.append(line)
 
-        # height of the map is always just the number of lines defined
-        self.height = len(lines)
-
-        for line in lines:
-            print(line)
-
-        print(self.width, self.height)
+        # if we have less lines than the height of the map then center it vertically
+        if len(lines) < self._height:
+            tpad = (self._height - len(lines)) // 2
+            bpad = self._height - len(lines) - tpad
+            lines = ([" " * self._width] * tpad) + lines + ([" " * self._width] * bpad)
 
         # convert the map to a 2D array of tiles
         self.tiles = [[self._make_tile(char) for char in line] for line in lines]
 
-        # position player - default to center of the map
-        self._player.x = self.width // 2
-        self._player.y = self.height // 2
-
     def move_player(self, player, dx, dy):
 
-        if player.x + dx < 0 or player.x + dx >= self.width:
+        if player.x + dx < 0 or player.x + dx >= self._width:
             dx = 0
 
-        if player.y + dy < 0 or player.y + dy >= (self.height):
+        if player.y + dy < 0 or player.y + dy >= (self._height):
             dy = 0
 
         # if the tile is walkable then move the player
@@ -71,6 +75,10 @@ class Map:
     def _make_tile(self, char):
         """Decode a map character into a tile"""
 
+        # spaces are default terrain
+        if char == ' ':
+            char = random.choice('♣,,,,')
+
         match char:
             # 75% tree, 25% grass
             case 'Y':
@@ -78,13 +86,13 @@ class Map:
             # 50% tree, 50% grass
             case 'y':
                 char = random.choice('♣♣,,')
-            # 25% tree, 75% grass
+            # 10% tree, 90% grass
             case ';':
-                char = random.choice('♣,,,,')
+                char = random.choice('♣,,,,,,,,,')
 
         # straight forward lookup for single purpose tiles
         lookup = {
-            'D' : 'door_closed',
+            'D' : 'door_open',
             ',' : 'grass',
             '~' : 'water',
             '╔' : 'wall_nw',

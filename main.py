@@ -1,10 +1,12 @@
 from blessed import Terminal as BlessedTerminal
 
 import tileset
+import messages
 
 from player import Player
 from screen import Screen
 from map import Map
+
 
 def main():
 
@@ -23,8 +25,15 @@ def main():
     # create a player
     player = Player()
 
+    # set the player's starting position - back room of the house
+    # TODO: come up with a better way of doing this
+    player.x = 40
+    player.y = 10
+
     # create a map
     map = Map('home', player)
+
+    messages.add("Welcome to Arthur's Adventures!")
 
     # show the main screen
     screen.main()

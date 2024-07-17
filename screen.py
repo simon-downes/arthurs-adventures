@@ -1,13 +1,17 @@
 
+import messages
 import tileset
 
 class Screen:
+    """"Central class for rendering the game screen"""
 
     def __init__(self, term):
 
         self._term = term
 
-        self.clear()
+        # store current terminal width and height
+        self.width = term.width
+        self.height = term.height
 
         self._ticks = 0
 
@@ -27,7 +31,22 @@ class Screen:
         # print text at x, y
         print(self._term.move_xy(x, y) + text, end='', flush=True)
 
+    def has_resized(self):
+        # check if the terminal has been resized
+
+        if self.width != self._term.width or self.height != self._term.height:
+            self.width = self._term.width
+            self.height = self._term.height
+            return True
+
+        return False
+
+    def is_too_small(self):
+        return self._term.width < 104 or self._term.height < 32
+
     def main(self):
+
+        self.clear()
 
         frames = {
             'map' : (0, 0, 80, 27, "World Map"),
@@ -64,8 +83,11 @@ class Screen:
 
     def update(self, map, player):
 
-        x_offset =  1 + ((80 - map.width) // 2)
-        y_offset =  1 + ((25 - map.height) // 2)
+        if self.has_resized():
+            self.main()
+
+        x_offset =  1 #+ ((80 - map.width) // 2)
+        y_offset =  1 #+ ((25 - map.height) // 2)
 
         lines = []
 
@@ -78,8 +100,9 @@ class Screen:
             self.print(x_offset, y_offset + dy, line)
 
         # draw player
-        self.print(x_offset + player.x, y_offset + player.y, "☿")
+        self.print(x_offset + player.x, y_offset + player.y, self._render_tile('player'))
 
+        self._render_messages()
 
         self._ticks += 1
 
@@ -87,9 +110,16 @@ class Screen:
         self.print(84, 28, f"Player: {player.x}, {player.y}")
         self.print(84, 32, f"Ticks: {self._ticks}")
 
+    def _render_messages(self):
+
+        # get the last 5 messages
+        for n, message in enumerate(messages.get(5)):
+            # TODO: handle colour codes in messages e.g. {red}{/red} or {green}{/green}
+            self.print(2, 28 + n, str(message).ljust(79, " "))
+
     def _render_tile(self, tile):
 
-        # we didn't get given a tile instance so look it up
+        # we didn't get given a tile instance so look it up in the tileset
         if not isinstance(tile, tileset.Tile):
             tile = tileset.get_tile(tile)
 
