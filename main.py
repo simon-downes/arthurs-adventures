@@ -6,6 +6,7 @@ import messages
 from player import Player
 from screen import Screen
 from map import Map
+from world import World
 
 
 def main():
@@ -30,15 +31,14 @@ def main():
     player.x = 40
     player.y = 10
 
-    # create a map
-    map = Map('home', player)
+    world = World(player)
 
     messages.add("Welcome to Arthur's Adventures!")
 
     # show the main screen
     screen.main()
 
-    screen.update(map, player)
+    screen.update(world.map, player)
 
     # never show the cursor
     with term.hidden_cursor():
@@ -64,9 +64,9 @@ def main():
                 case 'q' | 'KEY_ESCAPE':
                     break
 
-            map.move_player(player, dx, dy)
+            world.move_player(player, dx, dy)
 
-            screen.update(map, player)
+            screen.update(world.map, player)
 
         # move the cursor to the bottom of the game screen before we quit
         print(term.move_xy(0, 32))
