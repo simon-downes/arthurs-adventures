@@ -22,6 +22,9 @@ rank: ['⚜', 'bright_magenta', '']
 # ------------------------------------------------------------------------------
 player: ['☿', 'bright_magenta', '']
 
+bandit: ['X', 'red', '', false]
+
+
 # ------------------------------------------------------------------------------
 # item tiles
 # ------------------------------------------------------------------------------
@@ -56,17 +59,17 @@ tree_10: ['♠', 'darkolivegreen', '', false]
 # building tiles
 # ------------------------------------------------------------------------------
 
-door_open: ['☖', 'white', '' ]
-door_closed: ['☗', 'white', '' ]
+door_open: ['☖', 'gray45', '' ]
+door_closed: ['☗', 'gray45', '' ]
 
-wall_nw: ['╔', 'white', '', false]
-wall_n: ['╦', 'white', '', false]
-wall_ne: ['╗', 'white', '', false]
-wall_v: ['║', 'white', '', false]
-wall_h: ['═', 'white', '', false]
-wall_w: ['╠', 'white', '', false]
-wall_x: ['╬', 'white', '', false]
-wall_e: ['╣', 'white', '', false]
-wall_sw: ['╚', 'white', '' , false]
-wall_s: ['╩', 'white', '', false]
-wall_se: ['╝', 'white', '' , false]
+wall_nw: ['╔', 'gray45', '', false]
+wall_n: ['╦', 'gray45', '', false]
+wall_ne: ['╗', 'gray45', '', false]
+wall_v: ['║', 'gray45', '', false]
+wall_h: ['═', 'gray45', '', false]
+wall_w: ['╠', 'gray45', '', false]
+wall_x: ['╬', 'gray45', '', false]
+wall_e: ['╣', 'gray45', '', false]
+wall_sw: ['╚', 'gray45' , '', false]
+wall_s: ['╩', 'gray45', '', false]
+wall_se: ['╝', 'gray45' , '', false]

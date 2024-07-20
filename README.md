@@ -64,8 +64,7 @@ Well that's the dream - let's see how we get on... 🤣
 - [x] Player movement
 - [x] Message log (welcome message and then message player location on each move)
 - [ ] Map design
-  - [ ] Home
-  - [ ] Dark forrest
+  - [x] Home
   - [ ] Camelot
-- [ ] Movement between maps
-- [ ] Refactor input handling
+- [x] Movement between maps
+- [x] Refactor input handling

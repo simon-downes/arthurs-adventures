@@ -3,15 +3,13 @@ import random
 import yaml
 
 import tileset
-import messages
+import actors
 
 class Map:
-    def __init__(self, name, player, width = 80, height = 25):
+    def __init__(self, name, width = 80, height = 25):
 
         self._width = width
         self._height = height
-
-        self._player = player
 
         map = {}
 
@@ -71,12 +69,12 @@ class Map:
         inflection = self._inflection(*[0,0], *[80,25])
 
         # join the top and bottom origins to the inflection point
-        self._make_path(lines, *origins['top'], *inflection, False)
-        self._make_path(lines, *inflection, *origins['bottom'], False)
+        # self._make_path(lines, *origins['top'], *inflection, False)
+        # self._make_path(lines, *inflection, *origins['bottom'], False)
 
         # join the left and right origins to the inflection point
-        self._make_path(lines, *origins['left'], *inflection, True)
-        self._make_path(lines, *inflection, *origins['right'], True)
+        # self._make_path(lines, *origins['left'], *inflection, True)
+        # self._make_path(lines, *inflection, *origins['right'], True)
 
         # for debuging - dumps the map to the console
         # for line in lines:
@@ -88,19 +86,20 @@ class Map:
         # convert the map to a 2D array of tiles
         self.tiles = [[self._make_tile(char) for char in line] for line in lines]
 
+        self.actors = [
+            actors.spawn('bandit', 41, 16)
+        ]
 
+    def in_bounds(self, x, y):
+        return 0 <= x < self._width and 0 <= y < self._height
 
-    def move_player(self, player, dx, dy):
+    def get_actor_at(self, x, y):
 
-        if player.x + dx < 0 or player.x + dx >= self._width:
-            dx = 0
+        for actor in self.actors:
+            if actor.x == x and actor.y == y:
+                return actor
 
-        if player.y + dy < 0 or player.y + dy >= (self._height):
-            dy = 0
-
-        # if the tile is walkable then move the player
-        if self.tiles[player.y + dy][player.x + dx].walkable:
-            player.move(dx, dy)
+        return None
 
     def _hpath(self, lines, x, y, x2):
         for px in range(min(x, x2), max(x, x2) + 1):

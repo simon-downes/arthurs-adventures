@@ -15,6 +15,9 @@ class Screen:
 
         self._ticks = 0
 
+    def hidden_cursor(self):
+        return self._term.hidden_cursor()
+
     def _draw_frame(self, x, y, width, height, title):
 
         # draw a frame at x, y with width, height and title
@@ -98,6 +101,10 @@ class Screen:
         # for each line of characters, print it to the screen in the correct position
         for dy, line in enumerate(lines):
             self.print(x_offset, y_offset + dy, line)
+
+        # draw map entities
+        for actor in map.actors:
+            self.print(x_offset + actor.x, y_offset + actor.y, self._render_tile(actor.tile))
 
         # draw player
         self.print(x_offset + player.x, y_offset + player.y, self._render_tile('player'))
