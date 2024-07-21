@@ -46,27 +46,45 @@ class MovementAction(ActionWithDirection):
             return
 
         # is there someone in the way?
-        if engine.map.get_actor_at(x, y):
-            messages.add("There is someone in the way!")
+        a = engine.map.get_actor_at(x, y)
+        if a and a.is_alive:
+            messages.add(f"{self.actor.name}: There is someone in the way - {a.name}!")
             return
+
+        if not self.actor.is_player:
+            # non-player actors can't open doors
+            if engine.map.tiles[y][x].name.startswith('door'):
+                return
 
         self.actor.move(self.dx, self.dy)
 
 
 class MeleeAction(ActionWithDirection):
-    def perform(self, engine):
-
-        target = engine.map.get_actor_at(self.actor.x + self.dx, self.actor.y + self.dy)
+    def perform(self, engine, target):
 
         if not target:
             return
 
-        messages.add(f"You kick the {target.name}, much to its annoyance!")
+        damage = max(0, self.actor.fighter.power - target.fighter.defense)
+
+        msg = f"{self.actor.name} attacks {target.name}"
+        if damage:
+            msg += f" for {damage} hit points."
+        else:
+            msg += " but does no damage."
+
+        messages.add(msg)
+
+        # make sure we do the damage after the message is added
+        # so that any death messages are displayed in the correct order
+        target.fighter.hp -= damage
 
 class BumpAction(ActionWithDirection):
     def perform(self, engine):
 
-        if engine.map.get_actor_at(self.actor.x + self.dx, self.actor.y + self.dy):
-            return MeleeAction(self.actor, self.dx, self.dy).perform(engine)
+        target = engine.map.get_actor_at(self.actor.x + self.dx, self.actor.y + self.dy)
+
+        if target and target.is_alive:
+            return MeleeAction(self.actor, self.dx, self.dy).perform(engine, target)
 
         return MovementAction(self.actor, self.dx, self.dy).perform(engine)

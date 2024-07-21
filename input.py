@@ -36,7 +36,7 @@ class InputHandler:
 
         QUIT_KEYS = ['q', 'KEY_ESCAPE']
 
-        if key in MOVE_KEYS:
+        if key in MOVE_KEYS and player.is_alive:
             return BumpAction(player, *MOVE_KEYS[key])
 
         if key in WAIT_KEYS:
@@ -45,5 +45,6 @@ class InputHandler:
         if key in QUIT_KEYS:
             return EscapeAction(player)
 
+        print(key)
 
         return None

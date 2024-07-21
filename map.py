@@ -6,7 +6,7 @@ import tileset
 import actors
 
 class Map:
-    def __init__(self, name, width = 80, height = 25):
+    def __init__(self, name, player, width = 80, height = 25):
 
         self._width = width
         self._height = height
@@ -87,7 +87,9 @@ class Map:
         self.tiles = [[self._make_tile(char) for char in line] for line in lines]
 
         self.actors = [
-            actors.spawn('bandit', 41, 16)
+            actors.spawn('bandit', 41, 16),
+            # player is last so they are drawn on top
+            player,
         ]
 
     def in_bounds(self, x, y):

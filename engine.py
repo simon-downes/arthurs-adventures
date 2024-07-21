@@ -1,10 +1,9 @@
 
 import tileset
-import messages
 
 from actors import *
 from actions import *
-from world import *
+from map import *
 
 WORLD_WIDTH = 9
 WORLD_HEIGHT = 9
@@ -33,7 +32,7 @@ class Engine:
         self._map_y = WORLD_HEIGHT // 2
 
         # add the home map - center of the world
-        self.map = self._maps[self._map_y][self._map_x] = Map('home', MAP_WIDTH, MAP_HEIGHT)
+        self.map = self._maps[self._map_y][self._map_x] = Map('home', self.player, MAP_WIDTH, MAP_HEIGHT)
 
         # add a welcome message
         messages.add("Welcome to Arthur's Adventures!")
@@ -65,7 +64,7 @@ class Engine:
         """Check if moving the actor by dx, dy would change the map"""
 
         # only the player can change maps
-        if not actor.is_player():
+        if not actor.is_player:
             return None
 
         map_dx,  map_dy = 0, 0
@@ -121,7 +120,7 @@ class Engine:
 
         # generate a new map if it doesn't exist
         if not self._maps[self._map_y][self._map_x]:
-            self._maps[self._map_y][self._map_x] = Map('new', MAP_WIDTH, MAP_HEIGHT)
+            self._maps[self._map_y][self._map_x] = Map('new', self.player, MAP_WIDTH, MAP_HEIGHT)
 
         # set the new map
         self.map = self._maps[self._map_y][self._map_x]
@@ -131,4 +130,5 @@ class Engine:
 
     def actor_actions(self):
         for actor in self.map.actors:
-            messages.add(f"The {actor.name} wonders when it will get to take a real turn.")
+            if actor.ai and not actor.is_player:
+                actor.ai.perform(self)

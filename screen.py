@@ -102,12 +102,11 @@ class Screen:
         for dy, line in enumerate(lines):
             self.print(x_offset, y_offset + dy, line)
 
-        # draw map entities
+        # draw map actors
         for actor in map.actors:
             self.print(x_offset + actor.x, y_offset + actor.y, self._render_tile(actor.tile))
 
-        # draw player
-        self.print(x_offset + player.x, y_offset + player.y, self._render_tile('player'))
+        self._update_status(player)
 
         self._render_messages()
 
@@ -116,6 +115,11 @@ class Screen:
         # debug output
         self.print(84, 28, f"Player: {player.x}, {player.y}")
         self.print(84, 32, f"Ticks: {self._ticks}")
+
+    def _update_status(self, player):
+
+        self.print(86, 2, f"{player.fighter.hp} / {player.fighter.max_hp}".ljust(20))
+
 
     def _render_messages(self):
 
