@@ -14,6 +14,7 @@ class WaitAction(Action):
 
 class EscapeAction(Action):
     def perform(self, engine):
+        # TODO engine.pop_state()
         raise SystemExit()
 
 class ActionWithDirection(Action):

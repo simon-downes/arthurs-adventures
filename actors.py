@@ -7,7 +7,7 @@ from components.ai import Hostile
 def spawn(actor, x, y):
     match actor:
         case "bandit":
-            return Bandit(tileset.get_tile('bandit'), x, y, ai=Hostile, fighter=Fighter(hp=5, defense=1, power=2))
+            return Bandit(tileset.get_tile('bandit'), x, y, ai=Hostile, fighter=Fighter(hp=5, defense=1, power=200))
     return None
 
 class Actor:

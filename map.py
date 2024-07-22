@@ -5,6 +5,8 @@ import yaml
 import tileset
 import actors
 
+from buffer import Buffer
+
 class Map:
     def __init__(self, name, player, width = 80, height = 25):
 

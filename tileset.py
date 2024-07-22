@@ -27,3 +27,6 @@ class Tile():
         self.fg = fg
         self.bg = bg
         self.walkable = walkable
+
+    def __str__(self):
+        return self.char

@@ -1,28 +1,27 @@
-from blessed import Terminal as BlessedTerminal
-
-from screen import Screen
-from input import InputHandler
+import logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename="app.log",
+    encoding="utf-8",
+    filemode="a",
+    format="{asctime} [{levelname}] - {message}",
+    style="{",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 from engine import Engine
 
 def main():
 
-    term = BlessedTerminal()
+    logging.info("Starting game")
 
-    engine = Engine(Screen(term), InputHandler(term))
+    engine = Engine()
 
     try:
         engine.run()
 
     except SystemExit:
-        # move the cursor to the bottom of the game screen before we quit
-        print(term.move_xy(0, 32))
-
-    # if term.width < 104 or term.height < 32:
-    #     print("Please resize the terminal to at least 104x32")
-    #     return
-
-
+        pass
 
 if __name__ == "__main__":
     main()

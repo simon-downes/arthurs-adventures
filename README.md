@@ -68,3 +68,17 @@ Well that's the dream - let's see how we get on... 🤣
   - [ ] Camelot
 - [x] Movement between maps
 - [x] Refactor input handling
+- [x] Basic combat
+- [x] Buffers - yx co-ordinate data structure - for maps, screen, etc
+- [x] Game states
+  - [x] State definitions and transitions
+  - [x] Main Menu - Play / Quit
+  - [x] Game - Run game loop -> Back to main menu
+  - [ ] Messages - Show message log -> Back to game
+  - [ ] Help - Show help screen -> Back to game
+- [ ] Message log view
+- [ ] Stack messages
+- [ ] Colourful messages
+- [ ] Basic inventory and items
+  - [ ] Inventory state - Manage inventory screen -> Back to game
+- [ ] Basic equipment - weapons and armour

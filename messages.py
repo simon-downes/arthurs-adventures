@@ -10,7 +10,7 @@ def add(message):
     # add message to list
     _messages.append(message)
 
-    with open("messages.txt", "a") as log:
+    with open("messages.log", "a") as log:
         log.write(f"{ts} {message}\n")
 
 def get( n=5 ):

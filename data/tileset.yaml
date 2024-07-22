@@ -8,12 +8,12 @@ empty: ['·', 'gray40', '']
 # ------------------------------------------------------------------------------
 
 health: ['♥︎', 'red', '']
-health_full: ['▪', 'red', '']
-health_empty: ['▫', 'red', '']
+# health_full: ['▪', 'red', '']
+# health_empty: ['▫', 'red', '']
 
 xp: ['★', 'blue', '']
-xp_full: ['▪', 'blue', '']
-xp_empty: ['▫', 'blue', '']
+# xp_full: ['▪', 'blue', '']
+# xp_empty: ['▫', 'blue', '']
 
 rank: ['⚜', 'hotpink', '']
 
