@@ -74,9 +74,9 @@ Well that's the dream - let's see how we get on... 🤣
   - [x] State definitions and transitions
   - [x] Main Menu - Play / Quit
   - [x] Game - Run game loop -> Back to main menu
-  - [ ] Messages - Show message log -> Back to game
+  - [x] Messages - Show message log -> Back to game
   - [ ] Help - Show help screen -> Back to game
-- [ ] Message log view
+- [x] Message log view
 - [ ] Stack messages
 - [ ] Colourful messages
 - [ ] Basic inventory and items

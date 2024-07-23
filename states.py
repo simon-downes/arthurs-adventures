@@ -66,7 +66,7 @@ class MainMenu(GameState):
         screen.center(5, "Arthur's Adventures")
         screen.center(6, '-' * 25)
 
-        screen.frame(35, 10, 38, 7)
+        screen.frame(35, 10, 40, 7)
         screen.center(10, ' Main Menu ')
 
         screen.print(40, 12, "[p] Play Game")
@@ -84,6 +84,66 @@ class MainMenu(GameState):
             case 'p':
                 engine.push_state(Playing())
 
+class MessageViewer(GameState):
+
+    _to_show = 32
+
+    def enter(self, engine):
+
+        # default to the last "_to_show" messages
+        self._cursor = messages.count() - self._to_show
+
+        super().enter(engine)
+
+        # we only need our buffer to be big enough to display the messages
+        self._screen = engine.new_screen_buffer(82, self._to_show + 2)
+
+        screen = self._screen
+
+        # map is replaced with messages
+        screen.frame(0, 0, 82, self._to_show + 2, "Message Log", clear=True)
+
+        # render our screen buffer to the screen
+        self.render(engine, True)
+
+    def handle_input(self, engine, key):
+
+        QUIT_KEYS = ['q', 'KEY_ESCAPE', 'KEY_F9']
+
+        CURSOR_KEYS = {
+            'KEY_UP': -1,
+            'KEY_DOWN': 1,
+            'KEY_PGUP': -10,
+            'KEY_PGDOWN': 10,
+        }
+
+        if key in CURSOR_KEYS:
+
+            # adjust cursor
+            self._cursor += CURSOR_KEYS[key]
+
+            # make sure cursor is within bounds
+            self._cursor = min(messages.count() - self._to_show, max(0, self._cursor))
+
+        elif key == 'KEY_HOME':
+            self._cursor = 0
+
+        elif key == 'KEY_END':
+            self._cursor = messages.count() - self._to_show
+
+        elif key in QUIT_KEYS:
+            engine.pop_state()
+
+    def render(self, engine, clear=False):
+
+        screen = self._screen
+
+        for n, message in enumerate(messages.get(32, self._cursor)):
+            # TODO: handle colour codes in messages e.g. {red}{/red} or {green}{/green}
+            screen.print(2, 1 + n, str(message).ljust(79, " "))
+
+        super().render(engine)
+
 class Playing(GameState):
 
     _action = None
@@ -97,10 +157,10 @@ class Playing(GameState):
         screen = self._screen
 
         frames = {
-            'map' : (0, 0, 80, 27, "World Map"),
-            'status' : (82, 0, 26, 27, "Status"),
-            'messages' : (0, 27, 80, 7, "Messages"),
-            'debug' : (82, 27, 26, 7, "Debug"),
+            'map' : (0, 0, 82, 27, "World Map"),
+            'status' : (82, 0, 28, 27, "Status"),
+            'messages' : (0, 27, 82, 7, "Messages"),
+            'debug' : (82, 27, 28, 7, "Debug"),
         }
 
         for frame in frames:
@@ -150,8 +210,6 @@ class Playing(GameState):
 
         QUIT_KEYS = ['q', 'KEY_ESCAPE']
 
-        logging.info(f"Pressed: {key}")
-
         player = engine.player
 
         if key in MOVE_KEYS and player.is_alive:
@@ -159,6 +217,9 @@ class Playing(GameState):
 
         elif key in WAIT_KEYS:
             self._action =  WaitAction(player)
+
+        elif key == 'KEY_F9':
+            engine.push_state(MessageViewer())
 
         elif key in QUIT_KEYS:
             engine.pop_state()
@@ -194,7 +255,6 @@ class Playing(GameState):
         for actor in engine.map.actors:
             screen.set(x_offset + actor.x, y_offset + actor.y, screen.render_tile(actor.tile))
 
-
         self._ticks += 1
 
         # # debug output
@@ -204,7 +264,7 @@ class Playing(GameState):
         # self. _draw_frame(20, 7, 40, 10, "Inventory")
 
         # render last 5 messages
-        for n, message in enumerate(messages.get(5)):
+        for n, message in enumerate(messages.last(5)):
             # TODO: handle colour codes in messages e.g. {red}{/red} or {green}{/green}
             screen.print(2, 28 + n, str(message).ljust(79, " "))
 

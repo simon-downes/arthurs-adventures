@@ -1,3 +1,4 @@
+import logging
 
 import tileset
 
@@ -29,6 +30,17 @@ class Buffer:
         # create a 2D list of width x height filled with fill
         self._data = [[fill for _ in range(width)] for _ in range(height)]
 
+    def clear(self, fill=None, x=0, y=0, width=None, height=None):
+        """Clear the buffer or a region of the buffer"""
+
+        # make sure we don't try and clear outside the buffer
+        width = min(width if width else self.width , self.width - x)
+        height = min(height if height else self.height, self.height - y)
+
+        for dy in range(height):
+            for dx in range(width):
+                self._data[y + dy][x + dx] = fill
+
     def get(self, x, y):
         return self._data[y][x]
 
@@ -46,7 +58,7 @@ class Buffer:
             raise ValueError(f"Can't merge a {type(buffer)} into a Buffer")
 
         if x + buffer.width > self.width or y + buffer.height > self.height:
-            raise ValueError("Buffer is too big to merge at this position")
+            raise ValueError(f"Buffer is too big to merge at this position: ({x}, {y}), ({buffer.width}, {buffer.height}), ({self.width}, {self.height})")
 
         for dy, row in enumerate(buffer._data):
             for dx, value in enumerate(row):
@@ -98,17 +110,22 @@ class ScreenBuffer(Buffer):
 
         self._data[y][x] = value
 
-    def frame(self, x, y, width, height, title = ''):
+    def frame(self, x, y, width, height, title = '', clear=False):
 
         if title:
             title = f" {title} "
 
+        if clear:
+            self.clear(' ', x, y, width, height)
+
         # draw a frame at x, y with width, height and title
-        self.print(x, y, "╭" + ("─" * 2) + title + ("─" * (width - len(title) - 2)) + "╮", True)
+        logging.debug(f"{width} -> " + str(len("╭" + ("─" * 2) + title + ("─" * (width - len(title) - 2)) + "╮")))
+
+        self.print(x, y, "╭" + ("─" * 2) + title + ("─" * (width - len(title) - 4)) + "╮", True)
         for yy in range(1, height):
             self.set(x, y + yy, "│")
-            self.set(x + width + 1, y + yy, "│")
-        self.print(x, y + height - 1, "╰" + ("─" * width) + "╯")
+            self.set(x + width - 1, y + yy, "│")
+        self.print(x, y + height - 1, "╰" + ("─" * (width - 2)) + "╯")
 
     def bar(self, x, y, width, value, max_value, fg, bg=''):
 

@@ -1,3 +1,4 @@
+import logging
 
 from blessed import Terminal as BlessedTerminal
 
@@ -46,48 +47,6 @@ class Engine:
         # TODO: use a buffer
         self._maps = [[None for y in range(WORLD_HEIGHT)] for x in range(WORLD_WIDTH)]
 
-        # screen = ScreenBuffer(self._term, 110, 34)
-
-        # frames = {
-        #     'map' : (0, 0, 80, 27, "World Map"),
-        #     'status' : (82, 0, 26, 27, "Status"),
-        #     'messages' : (0, 27, 80, 7, "Messages"),
-        #     'debug' : (82, 27, 26, 7, "Debug"),
-        # }
-
-        # for frame in frames:
-        #     screen.frame(*frames[frame])
-
-
-        # print(screen)
-
-        # quit()
-
-        # t = Terminal(110, 34)
-
-        # t.render()
-
-        # quit()
-
-        # buf = Buffer(20, 10, '-')
-        # buf2 = Buffer(3, 3, '#')
-
-        # buf3 = buffer.from_string("Hello World")
-
-        # buf._data[2][1] = 'X'
-        # # buf._data[1][2] = None
-
-
-
-        # buf.merge(5, 7, buf2)
-        # buf.merge((buf.width - buf3.width) // 2, 1, buf3)
-
-        # buf.print(10, 3, "Hello World", True)
-
-        # print(buf)
-
-        # quit()
-
         self._map_x = WORLD_WIDTH // 2
         self._map_y = WORLD_HEIGHT // 2
 
@@ -124,10 +83,19 @@ class Engine:
         return ScreenBuffer(self._term, width, height)
 
     def wait_for_keypress(self):
+
         with self._term.cbreak():
             key = self._term.inkey()
 
-        return key.name or key
+        key = key.name or key
+
+        logging.debug(f"Key pressed: {key}")
+
+        # F12 key to force a screen render - handy when the terminal is resized
+        if key == 'KEY_F12':
+            self.screen.render(True)
+
+        return key
 
     def run(self):
 
@@ -149,18 +117,6 @@ class Engine:
 
                 # render the current state to the screen
                 self._states[-1].render(self)
-
-                # render the screen
-
-                # wait for a keypress that generates an action
-                # while not (action := self._input.wait_for_action(self.player)):
-                #     pass
-
-                # action.perform(self)
-
-                # self.actor_actions()
-
-                # self._screen.update(self.map, self.player)
 
     def would_change_map(self, actor, dx, dy):
         """Check if moving the actor by dx, dy would change the map"""
