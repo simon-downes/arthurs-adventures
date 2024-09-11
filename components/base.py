@@ -1,5 +1,5 @@
 
 class BaseComponent:
 
-    actor = None
+    parent = None
 

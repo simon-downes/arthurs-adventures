@@ -3,12 +3,19 @@ from datetime import datetime
 
 _messages = []
 
-def add(message):
+def add(message, stack=True):
+
+    if stack and _messages and _messages[-1]['text'] == message:
+        # increment count of last message
+        _messages[-1]['count'] += 1
+    else:
+        # add message to list
+        _messages.append({
+            'text': message,
+            'count': 1,
+        })
 
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # add message to list
-    _messages.append(message)
 
     with open("messages.log", "a") as log:
         log.write(f"{ts} {message}\n")

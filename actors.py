@@ -1,26 +1,60 @@
 
-import tileset
+import yaml
 
+from entity import Entity
 from components.fighter import Fighter
-from components.ai import Hostile
+from components.ai import (Hostile, Player as PlayerAI)
+from components.inventory import Inventory
+
+_npcs = {}
 
 def spawn(actor, x, y):
-    match actor:
-        case "bandit":
-            return Bandit(tileset.get_tile('bandit'), x, y, ai=Hostile, fighter=Fighter(hp=5, defense=1, power=200))
-    return None
 
-class Actor:
+    global _npcs
+
+    # load npc config if it hasn't been loaded yet
+    if not _npcs:
+        with open('data/npcs.yaml', 'r') as f:
+            _npcs = yaml.safe_load(f)
+
+
+    if actor in _npcs:
+        npc = _npcs[actor]
+
+        return Actor(
+            npc['tile'],
+            npc['name'],
+            x,
+            y,
+            ai=npc['ai'],
+            fighter=Fighter(**npc['fighter']) if 'fighter' in npc else None,
+            inventory=Inventory(capacity=npc.get('inventory', 0)),
+        )
+
+    raise ValueError(f"Unknown NPC: '{actor}'")
+
+class Actor(Entity):
     """Base class for all actors in the game - things that can perform actions"""
 
-    def __init__(self, tile, name, x, y, ai, fighter):
+    def __init__(self, tile, name, x, y, ai, fighter, inventory):
 
-        self.tile = tile
-        self.name = name
-        self.x = x
-        self.y = y
-        self.ai = ai
+        super().__init__(tile, name, x, y)
+
+        match ai:
+            case 'hostile':
+                self.ai = Hostile(self)
+            case 'player':
+                self.ai = PlayerAI(self)
+            case _:
+                print(ai)
+                self.ai = True
+
         self.fighter = fighter
+        self.fighter.parent = self
+
+        self.inventory = inventory
+        self.inventory.parent = self
+
 
     @property
     def is_player(self):
@@ -52,12 +86,12 @@ class Actor:
 class Player(Actor):
 
     def __init__(self, x, y):
-        super().__init__(tileset.get_tile('player'), 'Player', x, y, True, Fighter(hp=10, defense=2, power=5))
-        self.fighter.actor = self
-
-
-class Bandit(Actor):
-
-    def __init__(self, tile, x, y, ai, fighter):
-        super().__init__(tile, 'Bandit', x, y, ai(self), fighter)
-        self.fighter.actor = self
+        super().__init__(
+            'player',
+            'Player',
+            x,
+            y,
+            ai='Player',
+            fighter=Fighter(hp=10, defense=2, power=5),
+            inventory=Inventory(capacity=20),
+        )

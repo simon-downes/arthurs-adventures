@@ -1,0 +1,10 @@
+
+# weapons
+bandit:
+  name: "Bandit"
+  tile: bandit
+  ai: hostile
+  fighter:
+    hp: 5
+    defense: 1
+    power: 3

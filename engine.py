@@ -36,9 +36,6 @@ class Engine:
         # initialise the state machine
         self._states = []
 
-        # load our tiles
-        tileset.load()
-
         # create a player and set starting position - back room of the house
         # TODO: come up with a better way of setting the starting position
         self.player = Player(40, 10)
@@ -186,7 +183,11 @@ class Engine:
         # set the player's position on the new map
         self.player.teleport(px, py)
 
-    def actor_actions(self):
+    def npc_actions(self):
         for actor in self.map.actors:
             if actor.ai and not actor.is_player:
-                actor.ai.perform(self)
+                try:
+                    actor.ai.perform(self)
+                except exceptions.Impossible as e:
+                    # ignore impossible actions for npcs
+                    pass

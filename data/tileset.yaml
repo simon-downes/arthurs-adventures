@@ -36,7 +36,16 @@ gem: ['♦', 'bright_red', '']
 weapon: ['⸸', 'aliceblue', '']
 armour: ['⛨', '', '']
 
-potion_health: ['!', 'green', '']
+chest: ['⧗', 'khaki3', '']
+chest_empty: ['⧖', 'gold', '']
+
+chest: ['▣', 'khaki3', '']
+chest_empty: ['□', 'khaki3', '']
+
+multiple_items: ['⊍', 'khaki3', '']
+
+potion_health: ['!', 'red', '']
+food: ['⸙', 'green', '']
 
 # ------------------------------------------------------------------------------
 # terrain tiles

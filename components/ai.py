@@ -6,7 +6,12 @@ import messages
 from actions import *
 
 class BaseAI(Action):
-    pass
+    def perform(self):
+        raise NotImplementedError()
+
+class Player(BaseAI):
+    def perform(self):
+        pass
 
 class Hostile(BaseAI):
 

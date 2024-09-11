@@ -2,6 +2,7 @@
 import logging
 
 import messages
+import exceptions
 from actions import *
 
 class GameState:
@@ -140,7 +141,10 @@ class MessageViewer(GameState):
 
         for n, message in enumerate(messages.get(32, self._cursor)):
             # TODO: handle colour codes in messages e.g. {red}{/red} or {green}{/green}
-            screen.print(2, 1 + n, str(message).ljust(79, " "))
+            txt = message['text']
+            if message['count'] > 1:
+                txt = f"{txt} (x{message['count']})"
+            screen.print(2, 1 + n, str(txt).ljust(79, " "))
 
         super().render(engine)
 
@@ -212,14 +216,31 @@ class Playing(GameState):
 
         player = engine.player
 
+        # clear any previous action
+        self._action = None
+
         if key in MOVE_KEYS and player.is_alive:
             self._action = BumpAction(player, *MOVE_KEYS[key])
+
+        elif key == 'g':
+            self._action = PickupAction(player)
+
+        elif key == 'h':
+            for item in player.inventory.items:
+                if item.name == 'Food':
+                    self._action = item.consumable.get_action(player)
+
+            if not self._action:
+                messages.add('No food to eat.')
 
         elif key in WAIT_KEYS:
             self._action =  WaitAction(player)
 
         elif key == 'KEY_F9':
             engine.push_state(MessageViewer())
+
+        elif key == 'i':
+            engine.push_state(InventoryViewer())
 
         elif key in QUIT_KEYS:
             engine.pop_state()
@@ -231,11 +252,18 @@ class Playing(GameState):
         if not self._action:
             return
 
-        # perform the player action
-        self._action.perform(engine)
+        try:
+
+            # perform the player action
+            self._action.perform(engine)
+
+        # can't perform the action so skip enemy turns
+        except exceptions.Impossible as e:
+            messages.add(e.args[0])
+            return
 
         # run any actor actions
-        engine.actor_actions()
+        engine.npc_actions()
 
     def render(self, engine, clear=False):
 
@@ -250,6 +278,10 @@ class Playing(GameState):
         for dy, row in enumerate(engine.map.tiles):
             for dx, tile in enumerate(row):
                 screen.set(x_offset + dx, y_offset + dy, screen.render_tile(tile))
+
+        # draw map items
+        for item in engine.map.items:
+            screen.set(x_offset + item.x, y_offset + item.y, screen.render_tile(item.tile))
 
         # draw map actors
         for actor in engine.map.actors:
@@ -266,7 +298,10 @@ class Playing(GameState):
         # render last 5 messages
         for n, message in enumerate(messages.last(5)):
             # TODO: handle colour codes in messages e.g. {red}{/red} or {green}{/green}
-            screen.print(2, 28 + n, str(message).ljust(79, " "))
+            txt = message['text']
+            if message['count'] > 1:
+                txt = f"{txt} (x{message['count']})"
+            screen.print(2, 28 + n, str(txt).ljust(79, " "))
 
 
         screen.print(86, 2, f"{player.fighter.hp} / {player.fighter.max_hp}".ljust(20))
@@ -281,4 +316,58 @@ class Playing(GameState):
         screen.print(86, 13, f"Two-Handed Sword")
         screen.print(86, 14, f"Studded Coat")
 
+        # take the inventory summary and produce a list of tuples (tile, text)
+        inventory = [
+            [v[0], f"{k.ljust(18, '.')}{str(v[1]).rjust(4)}"] for k, v in player.inventory.summary().items()
+        ]
+
+        # for each tuple, render the tile and text to the screen buffer
+        for n, v in enumerate(inventory[:10]):
+            screen.set(84, 16 + n, screen.render_tile(v[0]))
+            screen.print(86, 16 + n, v[1])
+
+        # if there are less than 10 items in the inventory, pad the list
+        for n in range(len(inventory), 10):
+            screen.print(84, 16 + n, " " * 24)
+
         super().render(engine, clear)
+
+class InventoryViewer(GameState):
+
+    def enter(self, engine):
+
+        # default to the last "_to_show" messages
+        # self._cursor = messages.count() - self._to_show
+
+        super().enter(engine)
+
+        # we only need our buffer to be big enough to display the messages
+        self._screen = engine.new_screen_buffer(32, 14)
+
+        screen = self._screen
+
+        # map is replaced with messages
+        screen.frame(1, 1, 30, 12, "Inventory", clear=True)
+
+        # render our screen buffer to the screen
+        self.render(engine, True)
+
+    def handle_input(self, engine, key):
+
+        QUIT_KEYS = ['KEY_ESCAPE', 'i']
+
+        if key in QUIT_KEYS:
+            engine.pop_state()
+
+    def render(self, engine, clear=False):
+
+        screen = self._screen
+
+        x = (engine.screen.width - screen.width) // 2
+        y = (engine.screen.height - screen.height) // 2
+
+        # merge our screen buffer into the main screen buffer
+        engine.screen.merge(x, y, screen)
+
+        # flush the screen buffer to the terminal so we can we see the menu
+        engine.screen.render(clear)

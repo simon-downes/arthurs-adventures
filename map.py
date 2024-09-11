@@ -4,6 +4,7 @@ import yaml
 
 import tileset
 import actors
+import items
 
 from buffer import Buffer
 
@@ -88,6 +89,12 @@ class Map:
         # convert the map to a 2D array of tiles
         self.tiles = [[self._make_tile(char) for char in line] for line in lines]
 
+        self.items = [
+            items.spawn('food', 38, 12),
+            items.spawn('food', 43, 12),
+            items.spawn('chest', 43, 13),
+        ]
+
         self.actors = [
             actors.spawn('bandit', 41, 16),
             # player is last so they are drawn on top
@@ -97,10 +104,20 @@ class Map:
     def in_bounds(self, x, y):
         return 0 <= x < self._width and 0 <= y < self._height
 
+    def get_items_at(self, x, y):
+
+        items = []
+
+        for item in self.items:
+            if item.x == x and item.y == y:
+                items.append(item)
+
+        return items
+
     def get_actor_at(self, x, y):
 
         for actor in self.actors:
-            if actor.x == x and actor.y == y:
+            if actor.x == x and actor.y == y and not actor.is_player:
                 return actor
 
         return None

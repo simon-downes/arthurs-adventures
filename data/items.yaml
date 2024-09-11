@@ -1,0 +1,70 @@
+
+# ------------------------------------------------------------------------------
+# weapons
+# ------------------------------------------------------------------------------
+sturdy_stick:
+  name: "Sturdy Stick"
+  tile: weapon
+  value: 1
+  weight: 1
+  equipable:
+    damage: 5
+
+iron_dagger:
+  name: "Iron Dagger"
+  tile: weapon
+  value: 10
+  weight: 2
+  equipable:
+    damage: 10
+
+short_sword:
+  name: "Short Sword"
+  tile: weapon
+  value: 20
+  weight: 3
+  equipable:
+    damage: 20
+
+# ------------------------------------------------------------------------------
+# armour
+# ------------------------------------------------------------------------------
+cotton_shirt:
+  name: "Cotton Shirt"
+  tile: armour
+  value: 0
+  weight: 0
+  equipable:
+    defense: 1
+
+leather_jacket:
+  name: "Leather Jacket"
+  tile: armour
+  value: 5
+  weight: 3
+  equipable:
+    defense: 3
+
+# ------------------------------------------------------------------------------
+# consumables
+# ------------------------------------------------------------------------------
+food:
+  name: "Food"
+  tile: food
+  value: 2
+  consumable:
+    hp: 4
+
+# ------------------------------------------------------------------------------
+# containers
+# ------------------------------------------------------------------------------
+# a stack is a container that holds multiple items at a single location
+stack:
+  name: "Stack"
+  tile: stack
+  capacity: 20
+
+chest:
+  name: "Chest"
+  tile: chest
+  capacity: 5
